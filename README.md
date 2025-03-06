@@ -24,7 +24,6 @@ Following these steps should launch your Flask web application, allowing you to 
 
 ![home]()
 
-### Weblink: [Live Website](https://rishavchanda.netlify.app)
 ## Some Images:
 <img width="450px;" alt="Image" src="https://github.com/user-attachments/assets/0e26dcca-247d-4b69-b37f-6349b9e361b6" />
 <img width="450px;" alt="Image" src="https://github.com/user-attachments/assets/5a06d5ea-577d-4263-a6df-1a067217bfe2" />
