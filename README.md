@@ -22,8 +22,6 @@ Once you're in the directory containing your webapp.py file, run the following c
 
 Following these steps should launch your Flask web application, allowing you to access it through a web browser or any other HTTP client.
 
-![home]()
-
 ## Some Images:
 <img width="450px;" alt="Image" src="https://github.com/user-attachments/assets/0e26dcca-247d-4b69-b37f-6349b9e361b6" />
 <img width="450px;" alt="Image" src="https://github.com/user-attachments/assets/5a06d5ea-577d-4263-a6df-1a067217bfe2" />
