@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %} Object Detection & Tracking{% endblock %}
+
+{% block stylesheets %}
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link rel="stylesheet" href="/static/assets/plugins/fontawesome-free/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+{% endblock stylesheets %}
+
+
+{% block content %}
+    <style>
+body {
+    background-color: #1c1c1e;
+    color: white;
+.container {
+        text-align: center;
+        padding-top: 50px;
+    }
+.upload-box {
+  border: 2px dashed #6c757d;
+  border-radius: 20px;
+  padding: 50px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease ;
+}
+.btn-custom {
+            padding-left: 5px;
+    padding-right: 5px;
+    background-color: #6f42c1;
+            color: white;
+            border: none;
+        }
+.btn-custom:hover {
+    background-color: #5a32a3;
+        }
+
+.upload-box:hover {
+  background-color: #2c2c2e;
+}
+
+.upload-box img {
+  margin-bottom: 10px;
+    margin-top: auto;
+    padding: 10px;
+}
+
+.drag-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+    position: relative;
+}
+.preview-container {
+      margin-top: 30px;
+      display: none; /* Hidden by default */
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+.preview-container img, .preview-container video {
+      max-width: 100%;
+      max-height: 500px;
+      object-fit: contain;
+    }
+.preview-container p {
+      font-size: 1.2rem;
+      margin-top: 10px;
+    }
+.sample-data img {
+            border: 2px solid transparent;
+            border-radius: 10px;
+            transition: border-color 0.3s ease-in-out;
+        }
+        .sample-data img:hover {
+            border-color: #6c757d;
+        }
+.drag-area {
+    border: 2px dashed #6c757d;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px auto;
+
+.draggable-image {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            cursor: grab;
+        }}
+.purple-glow {
+    color: #39ff14; /* Purple color */
+    text-shadow: 0 0 10px #6f42c1, 0 0 10px #6f42c1, 0 0 15px #6f42c1;
+  }}
+.main-footer {
+    bottom: 0;
+    position: fixed;
+    width: 100vw;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
+<div class="container">
+    <h1 class="pb-4 text-wrap">Object Detection and Tracking</h1>
+    <form class="form-signin " method=post enctype=multipart/form-data name="form1">
+        <!-- Upload box -->
+        <div class="upload-box text-center drag-area" id="dropZone"
+             onclick="document.getElementById('fileInput').click();"
+             ondragover="event.preventDefault()"
+             ondrop="handleDrop(event)">
+            <!-- Hidden file input -->
+            <input type="file" id="fileInput" name="file" class="form-control-file" style="display: none;"
+                   onchange="handleFileSelection(event)">
+            <!-- Upload icon -->
+            <img src="https://www.pikpng.com/pngl/b/308-3085369_hr-cloud-upload-icon-clipart.png"
+                 alt="Upload Img"
+                 class="img-fluid"
+                 style="width: 120px; object-fit: cover; display: block; margin: auto;">
+            <!-- Drag-and-drop text -->
+            <p id="uploadText" style="font-size: 1.50rem; color: gray;">Drag & Drop Image or Video Here</p>
+            <p style="font-size: 1.50rem; color: gray;">or <a style="font-size: 1.50rem; color: mediumpurple" href="#">Browse Image</a></p>
+        </div>
+
+        <div class="preview-container" id="previewContainer">
+            <div id="uploadedContent"></div>
+            <p id="previewText"></p>
+        </div>
+
+        <h5>Or try drag and drop our sample data</h5>
+        <div class="draggable-image sample-data d-flex justify-content-center gap-3 mt-3" id="sampleImages" style="color: gray;">
+            <!-- Images will be dynamically added here -->
+        </div>
+
+        <div>
+            <button type="button" class="btn btn-custom px-5 py-2" onclick="shuffleImages()">Get Sample Images</button>
+        </div><br>
+
+        <button id="uploadButton" class="btn btn-custom px-5 py-2 rounded-pill" type="submit">Upload</button>
+        <p class="purple-glow mt-5 mb-3 text-center">Built using Pytorch
+            <img src="/static/assets/img/pytorch.png"
+                 alt="Upload Img"
+                 class="img-fluid"
+                 style="width: 15px;"> & Flask
+            <img src="/static/assets/img/pngwing.com.png"
+                 alt="Upload Img"
+                 class="img-fluid"
+                 style="width: 45px;background-color: #fff;">
+        </p>
+    </form>
+</div>
+
+<footer class="main-footer ">
+    &copy; <a target="_blank" rel="noopener noreferrer" href="#" style="color:aquamarine;">Chiru</a>
+    - coded by <a target="_blank" rel="noopener noreferrer" href="#" style="color:aquamarine;">Chiru Chaitanya</a>
+    <div class="float-right d-none d-sm-inline-block ">
+    </div>
+</footer>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    <script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+    const fileInput = document.getElementById("fileInput");
+    const dropZone = document.getElementById("dropZone");
+    const previewContainer = document.getElementById("previewContainer");
+
+    fileInput.addEventListener("change", function (event) {
+        if (event.target.files.length > 0) {
+            handleFileSelection(event.target.files[0]);
+        }
+    });
+
+    dropZone.addEventListener("dragover", function (event) {
+        event.preventDefault();
+        dropZone.style.border = "2px dashed purple"; // Visual feedback
+    });
+
+    dropZone.addEventListener("dragleave", function () {
+        dropZone.style.border = "2px dashed gray";
+    });
+
+    dropZone.addEventListener("drop", function (event) {
+        event.preventDefault();
+        dropZone.style.border = "2px dashed gray";
+
+        if (event.dataTransfer.files.length > 0) {
+            // User dropped an actual file
+            const file = event.dataTransfer.files[0];
+            handleFileSelection(file);
+            updateFileInput(file);
+        } else {
+            // User dragged a sample image
+            const fileSrc = event.dataTransfer.getData("text/plain");
+            if (fileSrc) {
+                fetchImageAsBlob(fileSrc);
+            }
+        }
+    });
+
+    function handleFileSelection(file) {
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                showPreview(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function showPreview(src) {
+        previewContainer.innerHTML = `<img src="${src}" class="img-fluid" style="max-width: 25%; border-radius: 10px;">`;
+        previewContainer.style.display = "block";
+    }
+
+    function updateFileInput(file) {
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+    }
+
+    function fetchImageAsBlob(imageUrl) {
+        fetch(imageUrl)
+            .then(response => response.blob())
+            .then(blob => {
+                const file = new File([blob], "sample.jpg", { type: blob.type });
+                handleFileSelection(file);
+                updateFileInput(file);
+            })
+            .catch(error => console.error("Error fetching image:", error));
+    }
+});
+
+// Shuffle Sample Images (Remains the Same)
+function shuffleImages() {
+    const images = [
+        { src: "/static/assets/sample2.jpg", alt: "Sample 2", caption: "Sample 2" },
+        { src: "/static/assets/sample3.jpg", alt: "Sample 3", caption: "Sample 3" },
+        { src: "/static/assets/sample4.jpg", alt: "Sample 4", caption: "Sample 4" },
+        { src: "/static/assets/sample5.jpg", alt: "Sample 5", caption: "Sample 5" },
+        { src: "/static/assets/sample6.jpg", alt: "Sample 6", caption: "Sample 6" },
+        { src: "/static/assets/sample8.jpg", alt: "Sample 8", caption: "Sample 8" },
+        { src: "/static/assets/sample9.jpg", alt: "Sample 9", caption: "Sample 9" },
+        { src: "/static/assets/sample10.jpg", alt: "Sample 10", caption: "Sample 10" },
+        { src: "/static/assets/sample11.jpg", alt: "Sample 11", caption: "Sample 11" },
+        { src: "/static/assets/sample12.jpg", alt: "Sample 12", caption: "Sample 12" },
+        { src: "/static/assets/sample13.jpg", alt: "Sample 13", caption: "Sample 13" },
+    ];
+
+    const sampleImagesContainer = document.getElementById("sampleImages");
+    sampleImagesContainer.innerHTML = "";
+
+    images.sort(() => Math.random() - 0.5).slice(0, 3).forEach(image => {
+        const imageDiv = document.createElement("div");
+        imageDiv.innerHTML = `
+            <img src="${image.src}"
+                 alt="${image.alt}"
+                 class="img-fluid draggable-image"
+                 draggable="true"
+                 style="width: 160px; height: 160px; object-fit: cover; border: 2px dashed #6c757d; border-radius: 10px; cursor: pointer;"
+                 ondragstart="event.dataTransfer.setData('text/plain', '${image.src}')">
+            <p class="text-center">${image.caption}</p>
+        `;
+        sampleImagesContainer.appendChild(imageDiv);
+    });
+}
+
+shuffleImages();
+
+</script>
+
+{% endblock javascripts %}
+
